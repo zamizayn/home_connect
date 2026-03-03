@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import '../../constants/app_colors.dart';
 import '../chat/chat_details_screen.dart';
 import '../chat/new_chat_screen.dart';
+import '../profile/profile_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -16,16 +17,25 @@ class HomeScreen extends StatelessWidget {
         elevation: 0,
         title: Row(
           children: [
-            Container(
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.red.withOpacity(0.2)),
-              ),
-              child: const Icon(
-                Icons.forum_outlined,
-                color: Colors.red,
-                size: 24,
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ProfileScreen()),
+                );
+              },
+              child: Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.red.withOpacity(0.2)),
+                ),
+                child: const Icon(
+                  Icons.forum_outlined,
+                  color: Colors.red,
+                  size: 24,
+                ),
               ),
             ),
             const SizedBox(width: 8),
@@ -44,9 +54,55 @@ class HomeScreen extends StatelessWidget {
             icon: const Icon(Icons.search, color: Colors.black, size: 28),
             onPressed: () {},
           ),
-          IconButton(
+          PopupMenuButton<String>(
             icon: const Icon(Icons.more_vert, color: Colors.black, size: 28),
-            onPressed: () {},
+            onSelected: (value) {
+              if (value == 'profile') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ProfileScreen()),
+                );
+              }
+            },
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            offset: const Offset(0, 50),
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'read_all',
+                child: Text('Read All', style: TextStyle(fontSize: 14)),
+              ),
+              PopupMenuItem(
+                value: 'profile',
+                child: Container(
+                  width: double.infinity,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Profile',
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.bold),
+                      ),
+                      Icon(Icons.check, size: 18, color: Colors.black),
+                    ],
+                  ),
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'oldest',
+                child:
+                    Text('Date Added (Oldest)', style: TextStyle(fontSize: 14)),
+              ),
+            ],
           ),
           const SizedBox(width: 8),
         ],
