@@ -4,6 +4,7 @@ import 'package:chat_app/Utils/utils.dart';
 import 'package:chat_app/constants/app_assets.dart';
 import 'package:chat_app/constants/app_colors.dart';
 import 'package:chat_app/screens/auth/forgot_password_screen.dart';
+import 'package:chat_app/screens/auth/otp_screen.dart';
 import 'package:chat_app/screens/home/main_scaffold.dart';
 import 'package:chat_app/widgets/custom_widgets.dart';
 import 'package:flutter/material.dart';
@@ -223,35 +224,12 @@ class _SplashScreenState extends State<SplashScreen> {
                               Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => const MainScaffold(),
+                                  builder: (context) =>
+                                      const OtpVerificationScreen(),
                                 ),
                                 (route) => false,
                               );
                             },
-                          ),
-                          SizedBox(height: 32.h),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Don't have an account? ",
-                                style: GoogleFonts.poppins(
-                                  color: Colors.grey,
-                                  fontSize: 13.sp,
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: () {},
-                                child: Text(
-                                  "Sign up",
-                                  style: GoogleFonts.poppins(
-                                    color: const Color(0xFFEF3935),
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 13.sp,
-                                  ),
-                                ),
-                              ),
-                            ],
                           ),
                         ],
                       ),

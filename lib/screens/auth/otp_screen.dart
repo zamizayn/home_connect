@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:chat_app/screens/home/main_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -167,11 +168,12 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                         CustomButton(
                           text: 'Submit',
                           onPressed: () {
-                            Navigator.push(
+                            Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const SetPasswordScreen(),
+                                builder: (context) => const MainScaffold(),
                               ),
+                              (route) => false,
                             );
                           },
                         ),
