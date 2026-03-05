@@ -95,6 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       top: false,
+      bottom: false,
       child: SingleChildScrollView(
         child: Column(
           children: [
@@ -125,6 +126,7 @@ class _HomeScreenState extends State<HomeScreen> {
             _announcementSection(),
             const SizedBox(height: 20),
             _chatList(context),
+            const SizedBox(height: 100),
           ],
         ),
       ),

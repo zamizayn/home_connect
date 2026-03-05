@@ -125,7 +125,7 @@ class _FieldVisitScreenState extends State<FieldVisitScreen> {
     ];
 
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 100),
       itemCount: visits.length,
       itemBuilder: (context, index) {
         final visit = visits[index];
