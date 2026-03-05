@@ -11,7 +11,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+  final bool? forceShowLogin;
+  const SplashScreen({super.key, this.forceShowLogin});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -27,21 +28,27 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
 
-    // Trigger animation after 2 seconds
-    Timer(const Duration(seconds: 2), () {
-      if (!mounted) return;
-      setState(() {
-        moveImageUp = true;
-        imageScale = 0.9;
-      });
-      // Show login card slightly after image moves up
-      Timer(const Duration(milliseconds: 600), () {
+    if (widget.forceShowLogin == true) {
+      showLogin = true;
+      moveImageUp = true;
+      imageScale = 0.9;
+    } else {
+      // Trigger animation after 2 seconds
+      Timer(const Duration(seconds: 2), () {
         if (!mounted) return;
         setState(() {
-          showLogin = true;
+          moveImageUp = true;
+          imageScale = 0.9;
+        });
+        // Show login card slightly after image moves up
+        Timer(const Duration(milliseconds: 600), () {
+          if (!mounted) return;
+          setState(() {
+            showLogin = true;
+          });
         });
       });
-    });
+    }
   }
 
   @override

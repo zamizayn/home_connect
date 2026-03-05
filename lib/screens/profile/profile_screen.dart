@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_assets.dart';
+import '../splash/splash_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -86,8 +87,18 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             _menuGroup([
-              _menuItem(Icons.image_outlined, 'Media, Links, and Docs', '12'),
-              _menuItem(Icons.star_border, 'Starred Messages', 'None'),
+              _menuItem(
+                Icons.image_outlined,
+                'Media, Links, and Docs',
+                '12',
+                onTap: () {},
+              ),
+              _menuItem(
+                Icons.star_border,
+                'Starred Messages',
+                'None',
+                onTap: () {},
+              ),
             ]),
             const SizedBox(height: 32),
             const Text(
@@ -96,12 +107,56 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             _menuGroup([
-              _menuItem(Icons.phone_outlined, 'Phone', ''),
-              _menuItem(Icons.chat_bubble_outline, 'Chat Settings', 'None'),
-              _menuItem(Icons.logout, 'Logout', '', isDestructive: true),
+              _menuItem(Icons.phone_outlined, 'Phone', '', onTap: () {}),
+              _menuItem(
+                Icons.chat_bubble_outline,
+                'Chat Settings',
+                'None',
+                onTap: () {},
+              ),
+              _menuItem(
+                Icons.logout,
+                'Logout',
+                '',
+                isDestructive: true,
+                onTap: () => _showLogoutConfirmation(context),
+              ),
             ]),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showLogoutConfirmation(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Text(
+          'Logout',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        content: const Text('Are you sure you want to logout?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      const SplashScreen(forceShowLogin: true),
+                ),
+                (route) => false,
+              );
+            },
+            child: const Text('Logout', style: TextStyle(color: Colors.red)),
+          ),
+        ],
       ),
     );
   }
@@ -129,8 +184,10 @@ class ProfileScreen extends StatelessWidget {
     String title,
     String trailing, {
     bool isDestructive = false,
+    required VoidCallback onTap,
   }) {
     return ListTile(
+      onTap: onTap,
       leading: Icon(icon, color: isDestructive ? Colors.red : Colors.black87),
       title: Text(
         title,

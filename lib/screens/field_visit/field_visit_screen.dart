@@ -1,67 +1,108 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../constants/app_colors.dart';
+import '../../widgets/preview_widgets.dart';
+import 'photo_preview_screen.dart';
 
-class FieldVisitScreen extends StatelessWidget {
+class FieldVisitScreen extends StatefulWidget {
   const FieldVisitScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  State<FieldVisitScreen> createState() => _FieldVisitScreenState();
+
+  PreferredSizeWidget getAppBar(BuildContext context) {
+    return AppBar(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: const Text(
-          'Customer Addresses',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 22,
-          ),
+      elevation: 0,
+      title: const Text(
+        'Customer Addresses',
+        style: TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.bold,
+          fontSize: 22,
         ),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF9F9F9),
-                borderRadius: BorderRadius.circular(25),
-              ),
-              child: const Row(
-                children: [
-                  Icon(Icons.search, color: Colors.grey, size: 24),
-                  SizedBox(width: 8),
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Search Names, Addresses',
-                        border: InputBorder.none,
-                        hintStyle: TextStyle(color: Colors.grey),
-                      ),
+    );
+  }
+}
+
+class _FieldVisitScreenState extends State<FieldVisitScreen> {
+  final Map<int, String> _capturedPhotos = {};
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> _takePhoto(int index) async {
+    final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
+    if (photo != null) {
+      if (!mounted) return;
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PhotoPreviewScreen(
+            imagePath: photo.path,
+            onSave: () {
+              setState(() {
+                _capturedPhotos[index] = photo.path;
+              });
+            },
+          ),
+        ),
+      );
+    }
+  }
+
+  void _viewPhoto(String path) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            FullscreenImageViewer(url: path, isLocalFile: true),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF9F9F9),
+              borderRadius: BorderRadius.circular(25),
+            ),
+            child: const Row(
+              children: [
+                Icon(Icons.search, color: Colors.grey, size: 24),
+                SizedBox(width: 8),
+                Expanded(
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Search Names, Addresses',
+                      border: InputBorder.none,
+                      hintStyle: TextStyle(color: Colors.grey),
                     ),
                   ),
-                ],
-              ),
-            ),
-          ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            child: Row(
-              children: [
-                _TabItem(label: 'All', isSelected: true),
-                SizedBox(width: 12),
-                _TabItem(label: 'Pending', isSelected: false),
-                SizedBox(width: 12),
-                _TabItem(label: 'Completed', isSelected: false),
+                ),
               ],
             ),
           ),
-          Expanded(child: _visitList()),
-        ],
-      ),
+        ),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          child: Row(
+            children: [
+              _TabItem(label: 'All', isSelected: true),
+              SizedBox(width: 12),
+              _TabItem(label: 'Pending', isSelected: false),
+              SizedBox(width: 12),
+              _TabItem(label: 'Completed', isSelected: false),
+            ],
+          ),
+        ),
+        Expanded(child: _visitList()),
+      ],
     );
   }
 
@@ -89,6 +130,9 @@ class FieldVisitScreen extends StatelessWidget {
       itemBuilder: (context, index) {
         final visit = visits[index];
         bool isCompleted = visit['status'] == 'Completed';
+        String? photoPath = _capturedPhotos[index];
+        bool hasPhoto = photoPath != null;
+
         return Container(
           margin: const EdgeInsets.only(bottom: 20),
           padding: const EdgeInsets.all(20),
@@ -143,13 +187,17 @@ class FieldVisitScreen extends StatelessWidget {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: isCompleted ? Colors.green[100] : Colors.red[100],
+                      color: isCompleted || hasPhoto
+                          ? Colors.green[100]
+                          : Colors.red[100],
                       borderRadius: BorderRadius.circular(15),
                     ),
                     child: Text(
-                      visit['status']!,
+                      hasPhoto ? 'Completed' : visit['status']!,
                       style: TextStyle(
-                        color: isCompleted ? Colors.green : Colors.red,
+                        color: isCompleted || hasPhoto
+                            ? Colors.green
+                            : Colors.red,
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
                       ),
@@ -182,11 +230,11 @@ class FieldVisitScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              if (!isCompleted)
+              if (!isCompleted && !hasPhoto)
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () => _takePhoto(index),
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.black,
                       backgroundColor: AppColors.primary,
@@ -201,7 +249,7 @@ class FieldVisitScreen extends StatelessWidget {
                     ),
                   ),
                 )
-              else
+              else if (hasPhoto || isCompleted)
                 Row(
                   children: [
                     Expanded(
@@ -233,18 +281,25 @@ class FieldVisitScreen extends StatelessWidget {
                     ),
                     const SizedBox(width: 12),
                     Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFFF9C4),
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        alignment: Alignment.center,
-                        child: const Text(
-                          'View Photo',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
+                      child: GestureDetector(
+                        onTap: () {
+                          if (hasPhoto) {
+                            _viewPhoto(photoPath);
+                          }
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFFF9C4),
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          alignment: Alignment.center,
+                          child: const Text(
+                            'View Photo',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),

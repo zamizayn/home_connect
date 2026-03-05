@@ -8,6 +8,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
+import '../../widgets/profile_bottom_sheet.dart';
+import 'group_info_screen.dart';
 
 enum MessageType { text, file, audio, image }
 
@@ -317,38 +319,74 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Row(
-          children: [
-            CircleAvatar(
-              radius: 20,
-              backgroundColor: Colors.blue[100],
-              child: Text(widget.name[0]),
-            ),
-            const SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.name,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
+        title: GestureDetector(
+          onTap: () {
+            if (widget.name.toLowerCase().contains('group')) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => GroupInfoScreen(groupName: widget.name),
+                ),
+              );
+            } else {
+              showModalBottomSheet(
+                context: context,
+                backgroundColor: Colors.transparent,
+                isScrollControlled: true,
+                isDismissible: true,
+                enableDrag: true,
+                builder: (context) => GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => Navigator.pop(context),
+                  child: DraggableScrollableSheet(
+                    initialChildSize: 0.8,
+                    maxChildSize: 0.9,
+                    minChildSize: 0.5,
+                    builder: (_, controller) => GestureDetector(
+                      onTap: () {},
+                      child: ProfileBottomSheet(
+                        name: widget.name,
+                        scrollController: controller,
+                      ),
+                    ),
                   ),
                 ),
-                const Row(
-                  children: [
-                    CircleAvatar(radius: 4, backgroundColor: Colors.green),
-                    SizedBox(width: 4),
-                    Text(
-                      'Online',
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
+              );
+            }
+          },
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 20,
+                backgroundColor: Colors.blue[100],
+                child: Text(widget.name[0]),
+              ),
+              const SizedBox(width: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.name,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
                     ),
-                  ],
-                ),
-              ],
-            ),
-          ],
+                  ),
+                  const Row(
+                    children: [
+                      CircleAvatar(radius: 4, backgroundColor: Colors.green),
+                      SizedBox(width: 4),
+                      Text(
+                        'Online',
+                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
       body: Column(

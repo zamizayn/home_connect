@@ -1,3 +1,4 @@
+import 'package:chat_app/screens/chat/chat_details_screen.dart';
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 
@@ -105,8 +106,10 @@ class NewChatScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(15),
@@ -168,8 +171,10 @@ class NewChatScreen extends StatelessWidget {
       ),
       child: Text(
         label,
-        style:
-            const TextStyle(color: Colors.black87, fontWeight: FontWeight.w500),
+        style: const TextStyle(
+          color: Colors.black87,
+          fontWeight: FontWeight.w500,
+        ),
       ),
     );
   }
@@ -197,6 +202,14 @@ class NewChatScreen extends StatelessWidget {
             horizontal: 20,
             vertical: 4,
           ),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ChatDetailsScreen(name: contact['name']!),
+              ),
+            );
+          },
           leading: CircleAvatar(
             radius: 28,
             backgroundColor: Colors.blue[100],
@@ -213,14 +226,6 @@ class NewChatScreen extends StatelessWidget {
           subtitle: Text(
             contact['role']!,
             style: const TextStyle(fontSize: 14, color: Colors.grey),
-          ),
-          trailing: Container(
-            width: 24,
-            height: 24,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.grey.withOpacity(0.5)),
-            ),
           ),
         );
       },
